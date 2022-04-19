@@ -1,3 +1,13 @@
+//color del background, usada para restablecer el color original en las casillas marcadas ganadoras
+//una vez que se reinicia el juego
+const backgroundColor = "#f3f1f5";
+
+//Color usado para pintar las casillas marcadas por el jugador ganador
+const winnerColor = "#92BA92";
+
+//Color usado para pintar las casillas marcadas por el jugador perdedor
+const loserColor = "#BB6464";
+
 //Selecciono todas las casillas del tablero
 const casillas = document.querySelectorAll(".casilla");
 
@@ -26,21 +36,27 @@ let juegaX = true;
 const xPosition = [];
 const oPosition = [];
 
+const xCasilla = [];
+const oCasilla = [];
+
 //Función que maneja la lógica del juego
 const handleClick = (event) => {
   texto.innerText = !juegaX ? "Juega X" : "Juega O";
   if (juegaX) {
     event.target.innerText = "X";
     xPosition.push(event.target.id);
+    xCasilla.push(event.target);
   } else {
     event.target.innerText = "O";
     oPosition.push(event.target.id);
+    oCasilla.push(event.target);
   }
   juegaX = !juegaX;
   event.target.removeEventListener("click", handleClick);
   if (xPosition.length === 3) {
     if (didPlayerWin(xPosition)) {
       console.log("gana x");
+      paintWinnerLoser(xCasilla, oCasilla);
       texto.innerText = "¡¡¡Gana X!!!";
       xWins++;
       xWinsSpan.innerText = xWins;
@@ -52,11 +68,14 @@ const handleClick = (event) => {
   if (oPosition.length === 3) {
     if (didPlayerWin(oPosition)) {
       console.log("gana o");
+      paintWinnerLoser(oCasilla, xCasilla);
       texto.innerText = "¡¡¡Gana O!!!";
       oWins++;
       oWinsSpan.innerText = oWins;
       endGame();
-    } else {
+    }
+
+    else {
       console.log("empate");
       texto.innerText = "Empate";
       endGame();
@@ -103,7 +122,7 @@ const rowColumnChecker = (array) => {
  * tienen el mismo orden
  */
 const checkArrayEqualityOrder = (arr1, arr2) => {
-  return JSON.stringify(arr1) == JSON.stringify(arr2);
+  return arr1.toString() === arr2.toString();
 };
 
 /**
@@ -142,11 +161,26 @@ const resetGame = () => {
     x.innerText = "";
     xPosition.length = 0;
     oPosition.length = 0;
+    xCasilla.length = 0;
+    oCasilla.length = 0;
+    x.style.backgroundColor = backgroundColor;
     x.addEventListener("click", handleClick);
   });
   texto.innerText = "Juega X";
   juegaX = true;
   restartButton.style.visibility = "hidden";
+};
+
+/**
+ * Función que pinta las casillas ganadoras y perdedoras
+ */
+const paintWinnerLoser = (winner, loser) => {
+  winner.forEach((x) => {
+    x.style.backgroundColor = winnerColor;
+  });
+  loser.forEach((x) => {
+    x.style.backgroundColor = loserColor;
+  });
 };
 
 restartButton.addEventListener("click", resetGame);
