@@ -74,7 +74,6 @@ const handleClick = (event) => {
       oWinsSpan.innerText = oWins;
       endGame();
     }
-
     else {
       console.log("empate");
       texto.innerText = "Empate";
